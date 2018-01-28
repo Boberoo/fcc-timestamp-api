@@ -38,6 +38,37 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
+var output = { unix: 123, natural: "12 Dec 1974" };
+var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
+app.route('/:idate')
+    .get(function(req, res) {
+  
+      //res.send(req.params.idate);
+      var date;
+      var reg = new RegExp('^[0-9]+$');
+      if (reg.test(req.params.idate)) {
+        //res.send(req.params.idate);
+        date = new Date(req.params.idate*1000);
+      }
+      else {
+        date = new Date(req.params.idate);
+      }
+
+      var days = "0" + date.getDate();
+      var month = monthNames[date.getMonth()];
+      var year = date.getFullYear();
+
+
+      output.natural = month + ' ' + days.substr(-2) + ', ' + year;
+      output.unix = date.getTime() / 1000;
+  
+      res.send(output);
+  
+		  
+    })
+
+
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
   res.status(404);
@@ -52,6 +83,7 @@ app.use(function(err, req, res, next) {
       .send(err.message || 'SERVER ERROR');
   }  
 })
+
 
 app.listen(process.env.PORT, function () {
   console.log('Node.js listening ...');
